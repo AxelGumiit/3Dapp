@@ -24,9 +24,9 @@ const ModelsPage = () => {
         Dive into the details of some of the most iconic car and bike models. Discover your perfect ride in a high-tech, immersive way.
       </p>
 
-      {/* Swiper Slider */}
+
       <Swiper
-        spaceBetween={20} // space between slides
+        spaceBetween={20} 
         slidesPerView={1}
         loop={true}
         autoplay={{
@@ -127,7 +127,7 @@ const ModelsPage = () => {
       </Swiper>
 
       {/* Responsive Styling */}
-      <style jsx>{`
+      <style>{`
         /* For smaller screens (mobile) */
         @media (max-width: 768px) {
           .text-5xl {

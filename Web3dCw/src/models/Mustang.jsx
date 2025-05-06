@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, OrbitControls, Environment } from '@react-three/drei';
+import { useGLTF, OrbitControls, Environment, Stars } from '@react-three/drei';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
-// Mustang Model Component
-const MustangModel = ({ wireframe, onClick, isMobile }) => {
+const MustangModel = ({ wireframe, onClick, isMobile, isDay }) => {
   const { scene } = useGLTF('/models/mustang.glb');
   const modelRef = useRef();
   const [hovered, setHovered] = useState(false);
@@ -19,71 +19,104 @@ const MustangModel = ({ wireframe, onClick, isMobile }) => {
   useFrame(() => {
     if (modelRef.current) {
       modelRef.current.rotation.y += 0.01;
-      // Adjust model scale based on isMobile state
-      modelRef.current.scale.setScalar(isMobile ? 3 : hovered ? 6 : 5); // Decrease scale for mobile
+      modelRef.current.scale.setScalar(isMobile ? 3 : hovered ? 6 : 5);
     }
   });
 
   return (
-    <primitive
-      ref={modelRef}
-      object={scene}
-      position={[0, -1, 0]}
-      rotation={[0, Math.PI, 0]}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick();
-      }}
-      onPointerOver={(e) => {
-        e.stopPropagation();
-        setHovered(true);
-        document.body.style.cursor = 'pointer';
-      }}
-      onPointerOut={(e) => {
-        e.stopPropagation();
-        setHovered(false);
-        document.body.style.cursor = 'default';
-      }}
-    />
+    <group ref={modelRef}>
+      <primitive
+        object={scene}
+        position={[0, -1, 0]}
+        rotation={[0, Math.PI, 0]}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          setHovered(true);
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          setHovered(false);
+          document.body.style.cursor = 'default';
+        }}
+      />
+
+ 
+      {!isDay && (
+        <>
+      
+      <mesh position={[0, -1, 0]}>
+        <boxGeometry args={[5, 0.05, 5]} />
+        <meshStandardMaterial 
+          color="grey" 
+          emissive="grey" 
+          emissiveIntensity={5} 
+          toneMapped={false} 
+        />
+      </mesh>
+
+      <pointLight 
+        position={[0, -0.9, 0]} 
+        intensity={2} 
+        color="grey" 
+        distance={5} 
+        decay={2} 
+      />
+        </>
+      )}
+    </group>
   );
 };
 
 const Mustang = () => {
   const [wireframe, setWireframe] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  const [carInfo, setCarInfo] = useState(null); // State to store the car info
+  const [carInfo, setCarInfo] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isDay, setIsDay] = useState(true);
 
   useEffect(() => {
     const fetchCarInfo = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/car-info/2'); 
+        const response = await fetch('http://localhost:8000/api/car-info/1');
         const data = await response.json();
         setCarInfo(data);
       } catch (error) {
         console.error('Error fetching car info:', error);
       }
     };
-    
+
     fetchCarInfo();
-    
+
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Set mobile breakpoint to 768px
+      setIsMobile(window.innerWidth <= 768);
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Initial check
+    handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
-    <div className="relative w-full h-screen">
-      <button
-        onClick={() => setWireframe((prev) => !prev)}
-        className="absolute top-20 left-4 z-10 bg-black text-white px-4 py-2 rounded shadow"
-      >
-        Toggle Wireframe
-      </button>
+    <div className={`relative w-full h-screen ${isDay ? 'bg-white' : 'bg-black'} transition-colors duration-500`}>
+      <div className="absolute top-20 left-4 z-10 flex flex-col gap-4">
+        <button
+          onClick={() => setWireframe((prev) => !prev)}
+          className="bg-black text-white px-4 py-2 rounded shadow"
+        >
+          Toggle Wireframe
+        </button>
+        <button
+          onClick={() => setIsDay((prev) => !prev)}
+          className="bg-black text-white px-4 py-2 rounded shadow"
+        >
+          Toggle Day/Night
+        </button>
+      </div>
 
       {showInfo && carInfo && (
         <div className={`absolute bottom-10 left-10 bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-xl shadow-lg
@@ -102,18 +135,32 @@ const Mustang = () => {
         </div>
       )}
 
-
       <Canvas
         camera={{
           position: isMobile ? [5, 5, 5] : [20, 20, 20],
           fov: isMobile ? 100 : 50,
         }}
       >
-        <ambientLight intensity={0.8} />
-        <directionalLight position={[5, 5, 5]} intensity={1.2} />
-        <MustangModel wireframe={wireframe} onClick={() => setShowInfo(true)} isMobile={isMobile} />
+        <ambientLight intensity={isDay ? 0.8 : 0.1} />
+        <directionalLight position={[5, 5, 5]} intensity={isDay ? 1.2 : 0.2} />
+
+        {!isDay && <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade />}
+
+        <MustangModel
+          wireframe={wireframe}
+          onClick={() => setShowInfo(true)}
+          isMobile={isMobile}
+          isDay={isDay}
+        />
+
+        {!isDay && (
+          <EffectComposer>
+            <Bloom luminanceThreshold={0.1} luminanceSmoothing={0.9} intensity={1.5} />
+          </EffectComposer>
+        )}
+
         <OrbitControls />
-        <Environment preset="sunset" />
+        <Environment preset={isDay ? 'sunset' : 'night'} />
       </Canvas>
     </div>
   );
