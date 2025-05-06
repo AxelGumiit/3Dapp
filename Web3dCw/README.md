@@ -30,7 +30,8 @@ An interactive car showroom web application built with a **React** frontend and 
 
 ```bash
 git clone https://github.com/AxelGumiit/3Dapp.git
-cd car-showroom
+cd 3Dapp
+cd Web3dCw
 
 ```
 
@@ -38,7 +39,6 @@ cd car-showroom
 
 
 ```bash
-cd Web3dCw
 cd src
 cd backend
 python -m venv venv
@@ -57,8 +57,3 @@ npm install
 npm run dev
 ```
 
-
-
-
-
->>>>>>> main

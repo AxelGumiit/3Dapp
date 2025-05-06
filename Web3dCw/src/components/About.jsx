@@ -185,7 +185,7 @@ const About = () => {
           <section className="mb-10">
             <h2 className="text-3xl font-semibold text-gray-800">Future Improvement</h2>
             <p className="text-gray-700 mt-3 leading-relaxed">
-              I aim to further enhance the platform by integrating cutting-edge technologies:
+              I aim to further enhance the platform by integrating different features such as:
             </p>
             <ul className="list-disc list-inside text-gray-700 mt-3 space-y-1">
               <li>Augmented reality (AR) for a more immersive car buying experience.</li>
