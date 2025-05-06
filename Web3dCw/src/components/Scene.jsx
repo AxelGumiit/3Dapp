@@ -10,12 +10,12 @@ import {
 } from "@react-three/drei";
 
 import * as THREE from "three";
-
 import React, { useEffect } from "react";
 import { DEG2RAD } from "three/src/math/MathUtils";
 
 export const Scene = ({ mainColor, path, ...props }) => {
-  const { nodes, materials, scene } = useGLTF(path);
+  const { nodes, scene } = useGLTF(path);
+
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
@@ -24,7 +24,9 @@ export const Scene = ({ mainColor, path, ...props }) => {
       }
     });
   }, [scene]);
+
   const ratioScale = Math.min(1.2, Math.max(0.5, window.innerWidth / 1920));
+
   return (
     <>
       <color attach="background" args={["#ffffff"]} />
@@ -40,6 +42,7 @@ export const Scene = ({ mainColor, path, ...props }) => {
         />
         <primitive object={scene} scale={ratioScale} />
         <ambientLight intensity={0.1} color="pink" />
+
         <AccumulativeShadows
           frames={100}
           alphaTest={0.9}
@@ -63,42 +66,42 @@ export const Scene = ({ mainColor, path, ...props }) => {
             bias={0.001}
           />
         </AccumulativeShadows>
+
         <Environment blur={0.8} background>
           <Sphere scale={15}>
             <meshBasicMaterial color={mainColor} side={THREE.BackSide} />
           </Sphere>
+
           <Lightformer
             position={[5, 0, -5]}
-            form="rect" // circle | ring | rect (optional, default = rect)
-            intensity={1} // power level (optional = 1)
-            color="red" // (optional = white)
-            scale={[3, 5]} // Scale it any way you prefer (optional = [1, 1])
+            form="rect"
+            intensity={1}
+            color="red"
+            scale={[3, 5]}
             target={[0, 0, 0]}
           />
-
           <Lightformer
             position={[-5, 0, 1]}
-            form="circle" // circle | ring | rect (optional, default = rect)
-            intensity={1} // power level (optional = 1)
-            color="green" // (optional = white)
-            scale={[2, 5]} // Scale it any way you prefer (optional = [1, 1])
+            form="circle"
+            intensity={1}
+            color="green"
+            scale={[2, 5]}
             target={[0, 0, 0]}
           />
-
           <Lightformer
             position={[0, 5, -2]}
-            form="ring" // circle | ring | rect (optional, default = rect)
-            intensity={0.5} // power level (optional = 1)
-            color="orange" // (optional = white)
-            scale={[10, 5]} // Scale it any way you prefer (optional = [1, 1])
+            form="ring"
+            intensity={0.5}
+            color="orange"
+            scale={[10, 5]}
             target={[0, 0, 0]}
           />
           <Lightformer
             position={[0, 0, 5]}
-            form="rect" // circle | ring | rect (optional, default = rect)
-            intensity={1} // power level (optional = 1)
-            color="purple" // (optional = white)
-            scale={[10, 5]} // Scale it any way you prefer (optional = [1, 1])
+            form="rect"
+            intensity={1}
+            color="purple"
+            scale={[10, 5]}
             target={[0, 0, 0]}
           />
         </Environment>
@@ -107,6 +110,6 @@ export const Scene = ({ mainColor, path, ...props }) => {
   );
 };
 
-useGLTF.preload("/models/ferrar_scene.glb");
+useGLTF.preload("/models/ferrari_scene.glb");
 useGLTF.preload("/models/mustang_scene.glb");
 useGLTF.preload("/models/motor_scene.glb");

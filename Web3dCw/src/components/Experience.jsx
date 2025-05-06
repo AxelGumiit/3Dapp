@@ -2,10 +2,8 @@ import {
   CameraControls,
   Dodecahedron,
   Environment,
-  Grid,
   Html,
   MeshDistortMaterial,
-  OrbitControls,
   RenderTexture,
 } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
@@ -131,28 +129,29 @@ export const Experience = () => {
       max: 10,
     },
   });
-
   const [audio] = useState(() => new Audio());
   const [isPlaying, setIsPlaying] = useState(false);
-
+  
   const playEngineSound = (soundPath) => {
     if (audio.src !== window.location.origin + soundPath) {
-      audio.src = soundPath;
+      audio.src = window.location.origin + soundPath;
+      audio.play();
+      setIsPlaying(true);
     }
-    audio.currentTime = 0;
-    audio.play();
-    setIsPlaying(true);
   };
-
-  // 🛠 Fix: Stop audio when slide changes
+  
   useEffect(() => {
-    if (isPlaying) {
+    if (!isPlaying) return;
+  
+    const handlePause = () => {
       audio.pause();
       audio.currentTime = 0;
       setIsPlaying(false);
-    }
+    };
+  
+    return () => handlePause();
   }, [slide]);
-
+  
   return (
     <>
       <ambientLight intensity={0.2} />
@@ -181,19 +180,6 @@ export const Experience = () => {
           <MeshDistortMaterial color={scenes[2].mainColor} speed={3} />
         </Dodecahedron>
       </group>
-
-      <Grid
-        position-y={-viewport.height / 2}
-        sectionSize={1}
-        sectionColor={"purple"}
-        sectionThickness={1}
-        cellSize={0.5}
-        cellColor={"#6f6f6f"}
-        cellThickness={0.6}
-        infiniteGrid
-        fadeDistance={50}
-        fadeStrength={5}
-      />
 
       {scenes.map((scene, index) => (
         <mesh
