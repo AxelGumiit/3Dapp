@@ -21,16 +21,6 @@ An interactive car showroom web application built with a **React** frontend and 
 - **SQLite** (for development) – Lightweight database used during local development.
 - Can be swapped with **PostgreSQL** for production.
 
----
-
-## 📁 Project Structure
-├── backend/ # Django project
-│ ├── carinfo/ # App with models, views, serializers
-│ ├── manage.py
-│ └── ...
-├── public/  #React app
-├── src/
-└── ...
 
 ---
 
@@ -49,6 +39,7 @@ cd car-showroom
 
 ```bash
 cd Web3dCw
+cd src
 cd backend
 python -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
