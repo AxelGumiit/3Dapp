@@ -1,8 +1,7 @@
 
 # 🚗 Car Showroom Web Application
 
-An interactive car showroom web application built with a **React** frontend and **Django** (with Django REST Framework) backend. Users can browse cars, view detailed information, and test-drive vehicles in a 3D scene.
-
+An interactive car showroom web application built with a **React** frontend and **Django** (with Django REST Framework) backend. Users can browse cars, view detailed information.
 ---
 
 ## 🛠️ Tech Stack
