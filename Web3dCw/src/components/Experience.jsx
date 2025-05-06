@@ -153,7 +153,7 @@ export const Experience = () => {
   }, [slide]);
   
   return (
-    <>
+    <>np
       <ambientLight intensity={0.2} />
       <Environment preset={"city"} />
       <CameraHandler slideDistance={slideDistance} />
