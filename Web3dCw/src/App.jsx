@@ -1,141 +1,97 @@
-
+import { Suspense, lazy, useState } from "react";
+import { Routes, Route, Link } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
-import { Physics } from "@react-three/rapier";
-import { Suspense, useState, useMemo } from "react";
-import { Html, useProgress } from "@react-three/drei";
-import { MainScene } from "./Scenes/MainScenes";
+import { Leva } from "leva";
+import { Loader } from "@react-three/drei";
+import ModelsPage from "./components/Model";
+import Ferrari from "./models/Ferrari";
+import Mustang from "./models/Mustang";
+import { Experience } from "./components/Experience";
+import Motor from "./models/Motor";
+import { Overlay } from "./components/Overlay";
+import About from "./components/About";
+import StatementOfOriginality from "./components/StatementOfOriginality";
+import CarCustomizationPage from "./components/Custom";
 
-
-
-function LoadingScreen() {
-  const { progress } = useProgress(); 
-
-  return (
-    <Html center>
-      <div 
-        style={{
-          fontSize: "2em",
-          textAlign: "center",
-          color: "#00ffcc", 
-          fontFamily: "'Orbitron', sans-serif",
-          textShadow: "0px 0px 20px rgba(0, 255, 204, 0.8)",
-        }}
-      >
-        <div style={{ 
-          fontSize: "3em", 
-          marginBottom: "20px", 
-          color: "#ff00ff", 
-          textShadow: "0px 0px 30px rgba(255, 0, 255, 0.8)" 
-        }}>
-          Loading... {Math.round(progress)}%
-        </div>
-        <div 
-          style={{ 
-            width: "100%", 
-            height: "20px", 
-            backgroundColor: "#333", 
-            borderRadius: "10px", 
-            boxShadow: "0 0 10px rgba(0, 255, 204, 0.5)" 
-          }}
-        >
-          <div 
-            style={{
-              width: `${progress}%`, 
-              height: "100%", 
-              backgroundColor: "#00ffcc", 
-              borderRadius: "10px", 
-              boxShadow: "0 0 15px rgba(0, 255, 204, 1)", 
-            }} 
-          />
-        </div>
-      </div>
-    </Html>
-  );
-}
 
 function App() {
-  const [startLoading, setStartLoading] = useState(false);
-
-  const handleStartClick = () => {
-    setStartLoading(true);
-  };
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-      <div style={{ position: "relative", width: "100vw", height: "100vh", backgroundColor: '#121212', overflow: 'hidden' }}>
-      {!startLoading && (
-        <div 
-          style={{
-            position: "absolute", 
-            top: "50%",  
-            left: "50%", 
-            transform: "translate(-50%, -50%)", 
-            textAlign: "center", 
-            color: "#fff", 
-            fontSize: "2rem",
-            fontFamily: "'Orbitron', sans-serif",
-            textShadow: "0 0 10px #00ffff, 0 0 20px #ff00ff",
-            animation: 'fadeIn 2s ease-in-out',
-          }}
-        >
-          <h1
-            style={{
-              fontSize: "2.5rem", 
-              marginBottom: "20px", 
-              color: "#00ffcc", 
-              textShadow: "0 0 15px rgba(0, 255, 204, 0.8)",
-              transition: "all 0.3s ease-in-out",
-            }}
-          >
-            Welcome to My Car Showroom
-          </h1>
-          <p
-            style={{
-              fontSize: "1.5rem", 
-              marginBottom: "30px", 
-              color: "#fff", 
-              textShadow: "0 0 10px rgba(0, 255, 204, 0.5)",
-              letterSpacing: "1px",
-            }}
-          >
+    <div className="relative w-full h-screen overflow-hidden">
+      <nav className="absolute top-0 left-0 right-0 z-30 flex justify-between items-center px-6 py-4 bg-white/80 backdrop-blur-md shadow-md">
+        <h1 className="text-xl font-bold">Car Showroom</h1>
 
-          </p>
-          <button
-            onClick={handleStartClick}
-            style={{
-              padding: "20px 40px", 
-              fontSize: "1.5rem", 
-              backgroundColor: "#ff0055", 
-              color: "#fff", 
-              border: "none", 
-              borderRadius: "10px", 
-              cursor: "pointer", 
-              boxShadow: "0 0 20px rgba(255, 0, 85, 0.7)",
-              transition: "all 0.3s ease-in-out",
-            }}
-            onMouseEnter={(e) => e.target.style.boxShadow = "0 0 30px rgba(255, 0, 85, 1)"}
-            onMouseLeave={(e) => e.target.style.boxShadow = "0 0 20px rgba(255, 0, 85, 0.7)"}
-          >
-            Start Exploring
+        <div className="lg:hidden">
+          <button className="text-2xl" onClick={toggleMenu}>
+            {isMenuOpen ? "×" : "☰"}
           </button>
         </div>
-      )}
 
-      {startLoading && (
-          <Canvas shadows camera={{ position: [-9, 5, 15], fov: 25 }}>
-            {/* Futuristic Background */}
-            <color attach="background" args={["#121212"]} /> 
+        <ul
+          className={`lg:flex gap-6 text-sm font-semibold ${
+            isMenuOpen ? "flex" : "hidden"
+          } lg:flex`}
+        >
+          <li>
+            <a href="/" className="cursor-pointer hover:opacity-70">
+              Home
+            </a>
+          </li>
+          <li>
+            <Link to="/models" className="hover:opacity-70">
+              Models
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/statement-of-originality"
+              className="cursor-pointer hover:opacity-70"
+            >
+              Statement of Originality
+            </Link>
+          </li>
+          <li>
+            <Link to="/about" className="cursor-pointer hover:opacity-70">
+              About
+            </Link>
+          </li>
+        </ul>
+      </nav>
 
-            {/* Light and reflections */}
-            <ambientLight intensity={1} color="#00ffcc" />
-            <directionalLight position={[10, 10, 10]} intensity={1} color="#ff00ff" />
-            
-            <Suspense fallback={<LoadingScreen />}>
-              <Physics debug>
-                <MainScene/>
-              </Physics>
-            </Suspense>
-          </Canvas>
-      )}
+      <Leva hidden />
+
+      <Routes>
+        <Route path="/customize/:carIndex" element={<CarCustomizationPage />} />
+
+        {/* Home Page (Lazy Loaded Canvas) */}
+        <Route
+          path="/"
+          element={
+            <>
+              <Overlay/>
+              <Canvas shadows camera={{ position: [0, 0, 5], fov: 30 }}>
+                <color attach="background" args={["#ececec"]} />
+                <Suspense fallback={null}>
+                  <Experience />
+                </Suspense>
+              </Canvas>
+              <Loader />
+            </>
+          }
+        />
+
+        <Route path="/models" element={<ModelsPage />} />
+        <Route path="/models/car1" element={<Ferrari />} />
+        <Route path="/models/car2" element={<Mustang />} />
+        <Route path="/models/car3" element={<Motor/>} />
+        <Route
+          path="/statement-of-originality"
+          element={<StatementOfOriginality />}
+        />
+        <Route path="/about" element={<About />} />
+      </Routes>
     </div>
   );
 }
